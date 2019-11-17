@@ -1,0 +1,11 @@
+{
+  "name": "wetube_second_copy",
+  "version": "1.0.0",
+  "description": "Cloning Youtube for the second time",
+  "main": "index.js",
+  "author": "SeokGyu Rick Lee",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
