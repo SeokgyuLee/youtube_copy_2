@@ -1,5 +1,5 @@
 node_modules
-
+uploads
 package-lock.json
 
 # Logs
@@ -106,3 +106,5 @@ dist
 
 # TernJS port file
 .tern-port
+
+

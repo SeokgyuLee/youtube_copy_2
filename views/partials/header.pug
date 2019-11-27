@@ -1,0 +1,21 @@
+header
+    .header__column
+        a(href=mRoutes.home)
+            i.fab.fa-youtube
+    .header__column
+        form(action=mRoutes.search, method = "get")
+            input(type="text", placeholder="search by term", name= "term")
+    .header__column
+        ul
+            if !user.isAuthenticated
+                li
+                    a(href=mRoutes.join) Join
+                li
+                    a(href=mRoutes.login) Log In
+            else
+                li
+                    a(href=`/videos${mRoutes.upload}`) Upload
+                li
+                    a(href=mRoutes.userDetail(user.id)) Profile
+                li
+                    a(href=mRoutes.logout) Logout

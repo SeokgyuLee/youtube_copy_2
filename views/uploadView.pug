@@ -1,0 +1,11 @@
+extends layouts/main
+
+block contentBlock
+    p upload! by Pug
+    .form-contatiner
+        form(action=`/videos${mRoutes.upload}`,method="post",enctype="multipart/form-data")
+            label(for="file") Video File
+            input(type="file", id="file", name="videoFile",required = true, accept="video/*")
+            input(type="text", name="title", placeholder="Title",required = true)
+            textarea(type="text", name = "description", placeholder="Description",required = true)
+            input(type="submit", value="Upload Video")
