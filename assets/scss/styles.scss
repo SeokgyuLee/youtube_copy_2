@@ -1,0 +1,9 @@
+@import "config/_variables.scss";
+// sass 파일에서 _를 붙이는 규칙 적용
+@import "config/reset.scss";
+@import "main.scss";
+
+@import "partials/header.scss";
+@import "partials/footer.scss";
+@import "partials/form.scss";
+@import "partials/socialLogin.scss";

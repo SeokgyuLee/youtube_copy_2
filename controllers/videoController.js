@@ -1,22 +1,32 @@
+/* eslint-disable no-console */
 import routes from "../routes";
-import mongoVideo from "../models/Video";
+import mongVideo from "../models/Video";
 
 export const homeCtrller = async (req, res) => {
   try {
-    const videos = await mongoVideo.find({});
+    const videos = await mongVideo.find({}).sort({ _id: -1 }); // 정렬
 
     res.render("homeView", { pageTitle: "home", videos });
+    console.log(videos);
   } catch (error) {
     console.log(error);
     res.render("homeView", { pageTitle: "home", videos: [] });
   }
 };
 
-export const searchCtrller = (req, res) => {
-  console.log(req.query.term);
+export const searchCtrller = async (req, res) => {
+  console.log("search 컨트롤러 로그");
   const {
     query: { term: searchingBy }
   } = req;
+  let videos = [];
+  try {
+    videos = await mongVideo.find({
+      title: { $regex: searchingBy, $options: "i" }
+    });
+  } catch (error) {
+    console.log(error);
+  }
   res.render("searchView", { pageTitle: "search", searchingBy, videos });
 };
 
@@ -31,18 +41,63 @@ export const postUploadCtrller = async (req, res) => {
     body: { title, description },
     file: { path }
   } = req;
-  const newVideo = await mongoVideo.create({
+  const newVideo = await mongVideo.create({
     videoFile: path,
     title,
-    description: description
+    description
   });
   console.log(newVideo);
   res.redirect(routes.videoDetail(newVideo.id));
 };
 
-export const videoDetailCtrller = (req, res) =>
-  res.render("videoDetailView", { pageTitle: "video detail" });
-export const editVideoCtrller = (req, res) =>
-  res.render("editVideoView", { pageTitle: "edit video" });
-export const deleteVideoCtrller = (req, res) =>
-  res.render("deleteVideoView", { pageTitle: "delete video" });
+export const videoDetailCtrller = async (req, res) => {
+  const {
+    params: { id }
+  } = req;
+  try {
+    const video = await mongVideo.findById(id);
+    res.render("videoDetailView", { pageTitle: video.title, video });
+  } catch (error) {
+    console.log(error);
+    res.redirect(routes.home);
+  }
+};
+export const getEditVideoCtrller = async (req, res) => {
+  const {
+    params: { id }
+  } = req;
+  try {
+    const video = await mongVideo.findById(id);
+    // console.log(video);
+    res.render("editVideoView", { pageTitle: `Edit ${video.title}`, video });
+  } catch (error) {
+    res.redirect(routes.home);
+  }
+};
+export const postEditVideoCtrller = async (req, res) => {
+  console.log("포스트비디오 들어왔다.");
+  const {
+    params: { id },
+    body: { title, description }
+  } = req;
+  try {
+    await mongVideo.findOneAndUpdate({ _id: id }, { title, description });
+    res.redirect(routes.videoDetail(id));
+  } catch (error) {
+    res.redirect(routes.home);
+  }
+};
+export const deleteVideoCtrller = async (req, res) => {
+  const {
+    params: { id }
+  } = req;
+  console.log("비디오 컨트롤러 들어옴");
+  try {
+    console.log(id);
+    await mongVideo.findOneAndRemove({ _id: id });
+    console.log("성공");
+  } catch (error) {
+    console.log(error);
+  }
+  res.redirect(routes.home);
+};
