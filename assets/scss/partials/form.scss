@@ -6,7 +6,8 @@
   form {
     width: 100%;
     max-width: 320px;
-    input {
+    input:not([type="file"]),
+    .fileUpload {
       display: block;
       padding-top: 10px;
       padding-bottom: 10px;
@@ -17,9 +18,29 @@
       }
     }
     input[type="submit"] {
-      background-color: #e74c3c;
+      background-color: #ff7675;
       color: white;
       margin-bottom: 40px;
+    }
+  }
+  a {
+    width: 100%;
+    max-width: 320px;
+  }
+  textarea {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 25px;
+  }
+  button.delete {
+    background-color: $dark-red;
+    color: white;
+  }
+  .fileUpload {
+    label {
+      font-weight: 300;
+      margin-right: 20px;
     }
   }
 }

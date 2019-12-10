@@ -12,18 +12,23 @@ body {
 
 main {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   min-height: 70vh;
 }
 
-input,
-button {
+input:not([type="file"]),
+button,
+textarea,
+.fileUpload {
+  border: none;
   padding: 7px 10px;
   width: 100%;
   border-radius: 5px;
   font-size: 14px;
+  background-color: white;
   color: $black;
+  resize: none;
   font-weight: 600;
   &::placeholder {
     font-weight: 300;

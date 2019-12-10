@@ -3,7 +3,7 @@ extends layouts/main
 block contentBlock
     .form-container
         form(action=mRoutes.login method="post")
-            input(type="text", name= "id" placeholder="id", required=true)
+            input(type="text", name= "email" placeholder="id", required=true)
             input(type="password" name="password" placeholder="password", required=true)
             input(type="submit", value="Log In")
         include partials/socialLogin

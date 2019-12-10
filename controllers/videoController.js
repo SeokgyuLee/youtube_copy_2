@@ -7,7 +7,6 @@ export const homeCtrller = async (req, res) => {
     const videos = await mongVideo.find({}).sort({ _id: -1 }); // 정렬
 
     res.render("homeView", { pageTitle: "home", videos });
-    console.log(videos);
   } catch (error) {
     console.log(error);
     res.render("homeView", { pageTitle: "home", videos: [] });
