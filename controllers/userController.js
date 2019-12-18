@@ -26,6 +26,7 @@ export const postJoinCtrller = async (req, res, next) => {
     }
   }
 };
+
 export const getLoginCtrller = (req, res) => {
   res.render("loginView", { pageTitle: "login" });
 };
@@ -33,6 +34,7 @@ export const postLoginCtrller = passport.authenticate("local", {
   failureRedirect: routes.login,
   successRedirect: routes.home
 });
+
 export const githubLoginCtrller = passport.authenticate("github");
 
 export const postGithubLogin = (req, res) => {
@@ -40,7 +42,7 @@ export const postGithubLogin = (req, res) => {
 };
 export const githubLoginCallback = async (_, __, profile, cb) => {
   const {
-    _json: { id, avatar_url, name, email }
+    _json: { id, avataRurl, name, email }
   } = profile;
   try {
     const githubUser = await mongUser.findOne({ email });
@@ -53,12 +55,43 @@ export const githubLoginCallback = async (_, __, profile, cb) => {
       email,
       name,
       githubId: id,
-      avatarUrl: avatar_url
+      avatarUrl: avataRurl
     });
     return cb(null, newUser);
   } catch (error) {
     return cb(error);
   }
+};
+
+// Facebbok
+
+export const facebookLoginController = passport.authenticate("facebook");
+
+export const facebookLoginCallback = async (_, __, profile, cb) => {
+  const {
+    _json: { id, name, email }
+  } = profile;
+  try {
+    const facebookUser = await mongUser.findOne({ email });
+    if (facebookUser) {
+      facebookUser.facebookId = id;
+      facebookUser.avatarUrl = `https://graph.facebook.com/${id}/picture?type=large`;
+      facebookUser.save();
+      return cb(null, facebookUser);
+    }
+    const newUser = await mongUser.create({
+      email,
+      name,
+      facebookId: id,
+      avatarUrl: `https://graph.facebook.com/${id}/picture?type=large`
+    });
+  } catch (error) {
+    return cb(error);
+  }
+};
+
+export const postFacebookLogin = (req, res) => {
+  res.redirect(routes.home);
 };
 export const logoutCtrller = (req, res) => {
   // To Do : Process Logout
@@ -68,14 +101,62 @@ export const logoutCtrller = (req, res) => {
 export const usersCtrller = (req, res) =>
   res.render("usersView", { pageTitle: "users" });
 
-export const me = (req, res) =>
-  res.render("userDetail", { pageTitle: "UserDetail", user: req.user });
-export const userDetailCtrller = (req, res) => {
-  res.render("userDetailView", { pageTitle: "user detail" });
+export const getMe = (req, res) =>
+  res.render("userDetailView", { pageTitle: "UserDetail", user: req.user });
+
+export const userDetailCtrller = async (req, res) => {
+  const {
+    params: { id }
+  } = req;
+  try {
+    const user = await mongUser.findById(id).populate("videos");
+    console.log(user);
+    res.render("userDetailView", {
+      pageTitle: "user detail",
+      user
+    });
+  } catch (error) {
+    res.redirect(routes.home);
+  }
 };
-export const editProfileCtrller = (req, res) =>
+export const getEditProfileCtrller = (req, res) => {
   res.render("editProfileView", { pageTitle: "edit profile" });
-export const changePasswordCtrller = (req, res) => {
-  console.log("컨트롤러 들어옴");
+};
+
+export const postEditProfileCtrller = async (req, res) => {
+  const {
+    body: { name, email },
+    file
+  } = req;
+  try {
+    await mongUser.findByIdAndUpdate(req.user.id, {
+      name,
+      email,
+      avatarUrl: file ? file.path : req.user.avatarUrl
+    });
+    res.redirect(routes.me);
+  } catch (error) {
+    console.log(error);
+    res.redirect(routes.editProfile);
+  }
+};
+
+export const getChangePasswordCtrller = (req, res) => {
   res.render("changePasswordView", { pageTitle: "change password" });
+};
+export const postChangePasswordCtrller = async (req, res) => {
+  const {
+    body: { oldPassword, newPassword, newPassword1 }
+  } = req;
+  try {
+    if (newPassword !== newPassword1) {
+      res.status(400);
+      res.redirect(`/users${routes.changePassword}`);
+      return;
+    }
+    await req.user.changePassword(oldPassword, newPassword);
+    res.redirect(routes.me);
+  } catch (error) {
+    res.redirect(`/users${routes.changePassword}`);
+  }
 };

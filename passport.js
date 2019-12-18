@@ -1,7 +1,11 @@
 import passport from "passport";
 import GithubStrategy from "passport-github";
+import FacebookStrategy from "passport-facebook";
 import mongUser from "./models/User";
-import { githubLoginCallback } from "./controllers/userController";
+import {
+  githubLoginCallback,
+  facebookLoginCallback
+} from "./controllers/userController";
 import routes from "./routes";
 
 passport.use(mongUser.createStrategy());
@@ -16,6 +20,21 @@ passport.use(
     githubLoginCallback
   )
 );
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FB_ID,
+      clientSecret: process.env.FB_SECRET,
+      callbackURL: `https://61bf8600.ngrok.io${routes.facebookCallback}`,
+      profileFields: ["id", "displayName", "photos", "email"],
+      scope: ["public_profile", "email"]
+    },
+    facebookLoginCallback
+  )
+);
 // 쿠키에게 user id 만 보내줄 것이라고 말해주는 것.
-passport.serializeUser((mongUser, done) => done(null, mongUser));
-passport.deserializeUser((mongUser, done) => done(null, mongUser));
+// passport.serializeUser((user, done) => done(null, user));
+// passport.deserializeUser((user, done) => done(null, user));
+
+passport.serializeUser(mongUser.serializeUser());
+passport.deserializeUser(mongUser.deserializeUser());

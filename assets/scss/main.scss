@@ -30,8 +30,13 @@ textarea,
   color: $black;
   resize: none;
   font-weight: 600;
+  max-width: 320px;
   &::placeholder {
     font-weight: 300;
     color: rgba(0, 0, 0, 0.6);
   }
+}
+button {
+  color: white;
+  background-color: #ff7675;
 }

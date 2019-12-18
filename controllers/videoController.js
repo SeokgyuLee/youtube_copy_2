@@ -43,9 +43,11 @@ export const postUploadCtrller = async (req, res) => {
   const newVideo = await mongVideo.create({
     videoFile: path,
     title,
-    description
+    description,
+    creator: req.user.id
   });
-  console.log(newVideo);
+  req.user.videos.push(newVideo.id);
+  req.user.save();
   res.redirect(routes.videoDetail(newVideo.id));
 };
 
@@ -54,7 +56,8 @@ export const videoDetailCtrller = async (req, res) => {
     params: { id }
   } = req;
   try {
-    const video = await mongVideo.findById(id);
+    const video = await mongVideo.findById(id).populate("creator");
+    console.log(video);
     res.render("videoDetailView", { pageTitle: video.title, video });
   } catch (error) {
     console.log(error);
@@ -68,7 +71,11 @@ export const getEditVideoCtrller = async (req, res) => {
   try {
     const video = await mongVideo.findById(id);
     // console.log(video);
-    res.render("editVideoView", { pageTitle: `Edit ${video.title}`, video });
+    if (video.creator !== req.user.id) {
+      throw Error();
+    } else {
+      res.render("editVideoView", { pageTitle: `Edit ${video.title}`, video });
+    }
   } catch (error) {
     res.redirect(routes.home);
   }
@@ -90,13 +97,35 @@ export const deleteVideoCtrller = async (req, res) => {
   const {
     params: { id }
   } = req;
-  console.log("비디오 컨트롤러 들어옴");
   try {
-    console.log(id);
-    await mongVideo.findOneAndRemove({ _id: id });
+    const video = await mongVideo.findById(id);
+    if (video.creator !== req.user.id) {
+      throw Error();
+    } else {
+      await mongVideo.findOneAndRemove({ _id: id });
+    }
+
     console.log("성공");
   } catch (error) {
     console.log(error);
   }
   res.redirect(routes.home);
+};
+
+// Register Video View
+export const postRegisterView = async (req, res) => {
+  const {
+    params: { id }
+  } = req;
+  try {
+    const video = await mongVideo.findById(id);
+    video.views += 1;
+    video.save();
+    res.status(200);
+  } catch (error) {
+    res.status(400);
+    res.end();
+  } finally {
+    res.end();
+  }
 };

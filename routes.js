@@ -22,6 +22,15 @@ const DELETE_VIDEO = "/:id/delete";
 // Github
 const GITHUB = "/auth/github";
 const GITHUB_CALLBACK = "/auth/github/callback";
+
+// Facebook
+const FACEBOOK = "/auth/facebook";
+const FACEBOOK_CALLBACK = "/auth/facebook/callback";
+
+// APIs
+const API = "/api";
+const REGISTER_VIEW = "/:id/view";
+
 const routes = {
   // Global
   home: HOME,
@@ -61,7 +70,12 @@ const routes = {
     return DELETE_VIDEO;
   },
   gitHub: GITHUB,
-  githubCallback: GITHUB_CALLBACK
+  githubCallback: GITHUB_CALLBACK,
+  me: ME,
+  facebook: FACEBOOK,
+  facebookCallback: FACEBOOK_CALLBACK,
+  api: API,
+  registerView: REGISTER_VIEW
 };
 
 export default routes;

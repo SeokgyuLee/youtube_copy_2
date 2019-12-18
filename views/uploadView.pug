@@ -1,8 +1,10 @@
 extends layouts/main
 
 block contentBlock
-    p upload! by Pug
     .form-container
+        .record-container#jsRecordView
+            video#jsVideopreview(src="")
+            button#jsRecordBtn Start Recording
         form(action=`/videos${mRoutes.upload}`,method="post",enctype="multipart/form-data")
             .fileUpload
                 label(for="file") Video File
