@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import routes from "../routes";
 import mongVideo from "../models/Video";
+import mongComment from "../models/Comment";
 
 export const homeCtrller = async (req, res) => {
   try {
@@ -56,7 +57,10 @@ export const videoDetailCtrller = async (req, res) => {
     params: { id }
   } = req;
   try {
-    const video = await mongVideo.findById(id).populate("creator");
+    const video = await await mongVideo
+      .findById(id)
+      .populate("creator")
+      .populate("comments");
     console.log(video);
     res.render("videoDetailView", { pageTitle: video.title, video });
   } catch (error) {
@@ -125,6 +129,30 @@ export const postRegisterView = async (req, res) => {
   } catch (error) {
     res.status(400);
     res.end();
+  } finally {
+    res.end();
+  }
+};
+
+// Add Comment
+
+export const postAddComment = async (req, res) => {
+  const {
+    params: { id },
+    body: { comment },
+    user
+  } = req;
+  try {
+    const Video = await mongVideo.findById(id);
+    const newComment = await mongComment.create({
+      text: comment,
+      creator: user.id
+    });
+    Video.comments.push(newComment.id);
+    Video.save();
+  } catch (error) {
+    res.status(400);
+    console.log(error);
   } finally {
     res.end();
   }
