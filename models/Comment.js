@@ -12,6 +12,10 @@ const CommentSchema = mongoose.Schema({
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "mongUser"
+  },
+  name: {
+    type: String,
+    required: "name is required"
   }
 });
 

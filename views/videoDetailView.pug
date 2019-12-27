@@ -33,4 +33,8 @@ block contentBlock
             ul.video__comments-list#jsCommentList
                 each comment in video.comments.reverse()
                     li
-                        span=comment.text
+                        span.commentUserName=comment.name
+                        |      
+                        span.commentDate #{comment.date.getFullYear()}.#{comment.date.getMonth()}.#{comment.date.getDate()}
+                    li
+                        span.commentText=comment.text

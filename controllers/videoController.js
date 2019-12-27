@@ -61,7 +61,7 @@ export const videoDetailCtrller = async (req, res) => {
       .findById(id)
       .populate("creator")
       .populate("comments");
-    console.log(video);
+    // console.log(req);
     res.render("videoDetailView", { pageTitle: video.title, video });
   } catch (error) {
     console.log(error);
@@ -85,7 +85,6 @@ export const getEditVideoCtrller = async (req, res) => {
   }
 };
 export const postEditVideoCtrller = async (req, res) => {
-  console.log("포스트비디오 들어왔다.");
   const {
     params: { id },
     body: { title, description }
@@ -146,7 +145,8 @@ export const postAddComment = async (req, res) => {
     const Video = await mongVideo.findById(id);
     const newComment = await mongComment.create({
       text: comment,
-      creator: user.id
+      creator: user.id,
+      name: user.name
     });
     Video.comments.push(newComment.id);
     Video.save();

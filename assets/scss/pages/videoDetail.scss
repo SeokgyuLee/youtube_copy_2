@@ -58,7 +58,14 @@
     .video__comments-list {
       margin-top: 50px;
       li:not(:last-child) {
-        margin-bottom: 15px;
+        margin-bottom: 25px;
+      }
+      .commentUserName {
+        font-weight: 600;
+      }
+      .commentDate {
+        font-size: 13px;
+        opacity: 0.7;
       }
     }
   }
